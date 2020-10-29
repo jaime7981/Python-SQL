@@ -1,0 +1,28 @@
+
+Esto se hace una vez:
+1.- descargar git de la pagina de git
+2.- abrir la consola de git en la carpeta donde vay a guardar tu trabajo (click derecho y la opcion "git bash")
+3.- git config --global user.email "you@example.com"
+4.- git config --global user.name "Your Name"
+
+
+Dentro de la consola de git:
+1.- git init  // inicia git en ese directorio
+2.- git clone direccion_github // copia el repositorio donde teni abierta la consola de git
+opcional pero recomendado:
+git remote add origin direccion_github  // para no tener que copiar y pegar la direccion del repositorio de github, ahi solo se pone origin en vez de direccion_github
+
+Cada vez que se quieran subir cambios:
+1.- git pull direccion_github  // actualiza la carpeta y todos sus archivos
+2.- git commit -m'mensaje cualquiera'  // guarda tus cambios pero sin subirlos
+3.- git push direccion_github master  // sube todo lo del ultimo commit
+
+ojo: si dos personas estan haciendo cambios y uno la sube, el otro no puede subir lo suyo o queda la cagada
+ahi lo mejor es guardar tu progreso en un archivo de texto y hacer un pull para quedar al dia
+
+Credenciales UANDES
+host: 201.238.213.114
+puerto: 54321
+username: grupo6
+dbname/maintenance db: grupo6
+password: 99sFKQ 
