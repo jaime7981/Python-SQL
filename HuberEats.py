@@ -1,7 +1,7 @@
 import psycopg2 as svpg
 from tabulate import tabulate
 import os
-cls = lambda: os.system('cls') #sirve para limiar la consola (Para cuando lo tengamos listo)
+cls = lambda: os.system('cls') #sirve para limpiar la consola (Para cuando lo tengamos listo)
 
 con = svpg.connect(database="grupo6", 
                  user="grupo6", 
@@ -11,12 +11,21 @@ con = svpg.connect(database="grupo6",
 
 print("Conexion exitosa")
 
-#SELECT * FROM categorias  // querry de ejemplo (locales, productos, pedidos, usuarios, menues, etc)
+#querry de ejemplo (locales, productos, pedidos, usuarios, menues, etc)
+#SELECT * FROM categorias 
 #con.commit()  // Actualiza los cambios en la base de datos, 
-#                   asi como los CREATE TABLE o UPDATES, etc
-
+#                   asi como los CREATE TABLE, UPDATES, INSERT, etc
 
 def InsertQuerry(text):
+    cur = con.cursor()
+    try:
+        cur.execute(text)
+        request = cur.fetchall()
+        return request
+    except:
+        print("Querry ingresado no valido")
+
+def PrintQuerry(text):
     cur = con.cursor()
     try:
         cur.execute(text)
@@ -31,30 +40,58 @@ def DisplayMenu(lista_menu):
         print(counter, ")", titulo_opcion)
         counter += 1
 
-def InputOpciones(): #quedan cosas por arreglar (va a servir para controlar el input de la consola si es que usamos case: para el menu)
+def ValidacionUsuario(usuario, clave):
+    usuarios_and_clave = InsertQuerry("SELECT email, contrasena FROM usuarios")
+    for usuarios in usuarios_and_clave:
+        if usuario == usuarios[0]:
+            if clave == usuarios[1]:
+                return True
+    return False
+
+#quedan cosas por arreglar en esta funcion (podria ser opcional)
+def InputOpciones():
     flag_opcion_correcta = True
     while flag_opcion_correcta:
         opcion = input()
 
     return opcion
 
+
+#Programa principal
 main = True
 
 while main:
-    login_menu = ["Ingrese querry","Iniciar Sesion", "Registrarse", "Exit"]
+    login_menu = ["Ingrese querry",
+                  "Iniciar Sesion", 
+                  "Registrarse", 
+                  "Exit"]
     DisplayMenu(login_menu)
     opcion = input()
 
     if opcion == "1":
         querry = input("Ingresar querry: ")
-        InsertQuerry(querry)
+        PrintQuerry(querry)
 
     if opcion == "2":
         print("Iniciar Sesion\n")
         login_nombre_usuario = input("Ingresar nombre de usuario: ")
         login_clave = input("Ingresar clave: ")
-        while True:
-            menu_entrada_usuario = ["Locales", "Categorias", "Promociones", "Direcciones", "Carrito", "Historial de pedidos", "Repartidores", "Cerrar Sesion", "Exit"]
+        
+        flag_menu_usuario = ValidacionUsuario(login_nombre_usuario, login_clave)
+
+        if flag_menu_usuario == False:
+            print("Usuario o clave incorrecta")
+
+        while flag_menu_usuario:
+            menu_entrada_usuario = ["Locales", 
+                                    "Categorias", 
+                                    "Promociones", 
+                                    "Direcciones", 
+                                    "Carrito", 
+                                    "Historial de pedidos", 
+                                    "Repartidores", 
+                                    "Cerrar Sesion", 
+                                    "Exit"]
             DisplayMenu(menu_entrada_usuario)
             opcion = input()
 
@@ -77,7 +114,7 @@ while main:
         main = False
     
     if opcion == "5":
-        InsertQuerry("SELECT * FROM usuarios") #opcion secreta para mostrar a los usuarios
+        PrintQuerry("SELECT * FROM usuarios") #opcion secreta para mostrar a los usuarios
 
 con.close()
 
