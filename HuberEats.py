@@ -1,7 +1,9 @@
 import psycopg2 as svpg
 from tabulate import tabulate
 import os
-cls = lambda: os.system('cls') #sirve para limpiar la consola (Para cuando lo tengamos listo)
+
+#sirve para limpiar la consola (Para cuando lo tengamos listo)
+cls = lambda: os.system('cls')
 
 con = svpg.connect(database="grupo6", 
                  user="grupo6", 
@@ -106,15 +108,19 @@ while main:
             print("Bienvenido a Hubber Eats\nRegistrarse:\n")
             nombre_nuevo_usuario = input("Ingresar nombre de usuario: ")
             clave_nuevo_usuario = input("Ingresar clave: ")
-            if len(clave_nuevo_usuario) > 6 and len(nombre_nuevo_usuario) > 4:
-                print("usuario creado")
+            if len(clave_nuevo_usuario) <= 6:
+                print("Clave no valida")
+            if "@" not in nombre_nuevo_usuario or len(nombre_nuevo_usuario) > 4:
+                print("Usuario no valido")
+            if "@" in nombre_nuevo_usuario and len(clave_nuevo_usuario) > 6 and len(nombre_nuevo_usuario) > 4:
+                print("usuario creado con exito")
                 break
 
     if opcion == "4":
         main = False
     
     if opcion == "5":
-        PrintQuerry("SELECT * FROM usuarios") #opcion secreta para mostrar a los usuarios
+        PrintQuerry("SELECT * FROM usuarios")
 
 con.close()
 
