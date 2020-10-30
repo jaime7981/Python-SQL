@@ -18,6 +18,7 @@ print("Conexion exitosa")
 #con.commit()  // Actualiza los cambios en la base de datos, 
 #                   asi como los CREATE TABLE, UPDATES, INSERT, etc
 
+#Devuelve un querry
 def InsertQuerry(text):
     cur = con.cursor()
     try:
@@ -27,6 +28,7 @@ def InsertQuerry(text):
     except:
         print("Querry ingresado no valido")
 
+#Tabula e imprime un querry en la consola
 def PrintQuerry(text):
     cur = con.cursor()
     try:
@@ -36,12 +38,14 @@ def PrintQuerry(text):
     except:
         print("Querry ingresado no valido")
 
+#Muestra en la consola el listado de opciones
 def DisplayMenu(lista_menu):
     counter = 1
     for titulo_opcion in lista_menu:
         print(counter, ")", titulo_opcion)
         counter += 1
 
+#Valida que el usuario y clave ingresada esten en la bbdd 
 def ValidacionUsuario(usuario, clave):
     usuarios_and_clave = InsertQuerry("SELECT email, contrasena FROM usuarios")
     for usuarios in usuarios_and_clave:
@@ -50,41 +54,45 @@ def ValidacionUsuario(usuario, clave):
                 return True
     return False
 
-#quedan cosas por arreglar en esta funcion (podria ser opcional)
-def InputOpciones():
-    flag_opcion_correcta = True
-    while flag_opcion_correcta:
-        opcion = input()
-
-    return opcion
+#Funcion que valida que la opcion ingresada sea un numero
+def InputOpciones(menu):
+    try:
+        opcion = int(input())
+        if opcion <= len(menu) and opcion > 0:
+            return opcion
+        else:
+            print("No existe la opcion ingresada")
+    except:
+        print("Opcion no valida")
 
 
 #Programa principal
 main = True
 
 while main:
+    #Menu de inicio
     login_menu = ["Ingrese querry",
                   "Iniciar Sesion", 
                   "Registrarse", 
                   "Exit"]
     DisplayMenu(login_menu)
-    opcion = input()
+    opcion = InputOpciones(login_menu)
 
-    if opcion == "1":
+    if opcion == 1:
         querry = input("Ingresar querry: ")
         PrintQuerry(querry)
 
-    if opcion == "2":
+    if opcion == 2:
+        #Validacion login
         print("Iniciar Sesion\n")
         login_nombre_usuario = input("Ingresar nombre de usuario: ")
         login_clave = input("Ingresar clave: ")
-        
         flag_menu_usuario = ValidacionUsuario(login_nombre_usuario, login_clave)
-
         if flag_menu_usuario == False:
             print("Usuario o clave incorrecta")
 
         while flag_menu_usuario:
+            #Menu principal
             menu_entrada_usuario = ["Locales", 
                                     "Categorias", 
                                     "Promociones", 
@@ -95,31 +103,35 @@ while main:
                                     "Cerrar Sesion", 
                                     "Exit"]
             DisplayMenu(menu_entrada_usuario)
-            opcion = input()
+            opcion = InputOpciones(menu_entrada_usuario)
 
-            if opcion == "8":
+            if opcion == 8:
                 break
-            if opcion == "9":
+
+            if opcion == 9:
                 main = False
                 break
 
-    if opcion == "3":
+    if opcion == 3:
         while True:
             print("Bienvenido a Hubber Eats\nRegistrarse:\n")
             nombre_nuevo_usuario = input("Ingresar nombre de usuario: ")
             clave_nuevo_usuario = input("Ingresar clave: ")
+
             if len(clave_nuevo_usuario) <= 6:
                 print("Clave no valida")
-            if "@" not in nombre_nuevo_usuario or len(nombre_nuevo_usuario) > 4:
-                print("Usuario no valido")
-            if "@" in nombre_nuevo_usuario and len(clave_nuevo_usuario) > 6 and len(nombre_nuevo_usuario) > 4:
+
+            if "@" in nombre_nuevo_usuario and (".com" in nombre_nuevo_usuario or ".cl" in nombre_nuevo_usuario)\
+                and len(clave_nuevo_usuario) > 6 and len(nombre_nuevo_usuario) > 8:
                 print("usuario creado con exito")
                 break
+            else:
+                print("Usuario no valido")
 
-    if opcion == "4":
+    if opcion == 4:
         main = False
     
-    if opcion == "5":
+    if opcion == 5:
         PrintQuerry("SELECT * FROM usuarios")
 
 con.close()
