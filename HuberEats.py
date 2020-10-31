@@ -105,6 +105,27 @@ while main:
             DisplayMenu(menu_entrada_usuario)
             opcion = InputOpciones(menu_entrada_usuario)
 
+            if opcion == 1:
+                pass
+
+            if opcion == 2:
+                pass
+
+            if opcion == 3:
+                pass
+
+            if opcion == 4:
+                pass
+
+            if opcion == 5:
+                pass
+
+            if opcion == 6:
+                pass
+
+            if opcion == 7:
+                pass
+
             if opcion == 8:
                 break
 
