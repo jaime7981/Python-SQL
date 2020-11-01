@@ -19,7 +19,7 @@ print("Conexion exitosa")
 #                   asi como los CREATE TABLE, UPDATES, INSERT, etc
 
 #Devuelve un querry
-def InsertQuerry(text):
+def SelectQuerry(text):
     cur = con.cursor()
     try:
         cur.execute(text)
@@ -38,6 +38,37 @@ def PrintQuerry(text):
     except:
         print("Querry ingresado no valido")
 
+#InsertTest("nombre tabla", ("col1", "col2", "col3"), ("dato1", "dato2", "dato3"))
+#
+def InsertQuerry(table, lista_columnas, lista_datos):
+
+    lista_d = "(" + ", ".join(lista_datos) + ")"
+    lista_c = "(" + ", ".join(lista_columnas) + ")"
+
+    if len(lista_datos) > 0:
+        cur = con.cursor()
+        if len(lista_c) == 2:
+            try:
+                insertstr = "INSERT INTO " + table + " VALUES " + lista_d
+                cur.execute(insertstr)
+                con.commit()
+                return True
+            except:
+                print("Querry ingresado no valido")
+                return False
+        elif len(lista_c) > 2:
+            try:
+                insertstr = "INSERT INTO " + table + lista_c + " VALUES " + lista_d
+                cur.execute(insertstr)
+                con.commit()
+                return True
+            except:
+                print("Querry ingresado no valido")
+                return False
+    else:
+        print("Insert no tiene valores")
+        return False
+
 #Muestra en la consola el listado de opciones
 def DisplayMenu(lista_menu):
     counter = 1
@@ -47,7 +78,7 @@ def DisplayMenu(lista_menu):
 
 #Valida que el usuario y clave ingresada esten en la bbdd 
 def ValidacionUsuario(usuario, clave):
-    usuarios_and_clave = InsertQuerry("SELECT email, contrasena FROM usuarios")
+    usuarios_and_clave = SelectQuerry("SELECT email, contrasena FROM usuarios")
     for usuarios in usuarios_and_clave:
         if usuario == usuarios[0]:
             if clave == usuarios[1]:
@@ -65,7 +96,6 @@ def InputOpciones(menu):
     except:
         print("Opcion no valida")
 
-
 #Programa principal
 main = True
 
@@ -74,7 +104,8 @@ while main:
     login_menu = ["Ingrese querry",
                   "Iniciar Sesion", 
                   "Registrarse", 
-                  "Exit"]
+                  "Exit",
+                  "Ver Usuarios"]
     DisplayMenu(login_menu)
     opcion = InputOpciones(login_menu)
 
@@ -136,16 +167,33 @@ while main:
     if opcion == 3:
         while True:
             print("Bienvenido a Hubber Eats\nRegistrarse:\n")
-            nombre_nuevo_usuario = input("Ingresar nombre de usuario: ")
-            clave_nuevo_usuario = input("Ingresar clave: ")
+            nombre_apellido = "'" + input("Ingresar nombre y apellido: ") + "'"
+            nombre_usuario = "'" + input("Ingresar usuario: ") + "'"
+            clave_nuevo_usuario = "'" + input("Ingresar clave: ") + "'"
+            numero_usuario = input("Ingresar numero de telefono: ")
 
             if len(clave_nuevo_usuario) <= 6:
                 print("Clave no valida")
 
-            if "@" in nombre_nuevo_usuario and (".com" in nombre_nuevo_usuario or ".cl" in nombre_nuevo_usuario)\
-                and len(clave_nuevo_usuario) > 6 and len(nombre_nuevo_usuario) > 8:
-                print("usuario creado con exito")
-                break
+            if "@" in nombre_usuario \
+                and (".com" in nombre_usuario or ".cl" in nombre_usuario)\
+                and len(clave_nuevo_usuario) > 6 and len(nombre_usuario) > 8\
+                and len(numero_usuario) == 9:
+                nuevo_id_usuario = SelectQuerry("SELECT id_usuario FROM usuarios")
+
+                crear_usuario = InsertQuerry("usuarios", (), (str(len(nuevo_id_usuario) + 1),
+                                                                nombre_apellido, 
+                                                                nombre_usuario, 
+                                                                clave_nuevo_usuario, 
+                                                                numero_usuario))
+
+                if crear_usuario == True:
+                    print("usuario creado con exito")
+                    break
+                else:
+                    print("Error al crear usuario")
+                    break
+
             else:
                 print("Usuario no valido")
 
@@ -154,6 +202,8 @@ while main:
     
     if opcion == 5:
         PrintQuerry("SELECT * FROM usuarios")
+        nuevo_id_usuario = SelectQuerry("SELECT id_usuario FROM usuarios")
+        print(len(nuevo_id_usuario) + 1)
 
 con.close()
 
