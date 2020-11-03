@@ -73,7 +73,7 @@ def InsertQuerry(table, lista_columnas, lista_datos):
 def DisplayMenu(lista_menu):
     counter = 1
     for titulo_opcion in lista_menu:
-        print(counter, ")", titulo_opcion)
+        print(str(counter) + ") " + str(titulo_opcion))
         counter += 1
 
 #Valida que el usuario y clave ingresada esten en la bbdd 
@@ -137,12 +137,27 @@ while main:
             opcion = InputOpciones(menu_entrada_usuario)
 
             if opcion == 1:
+                PrintQuerry("SELECT * FROM locales")
+                while True:
+                    opciones_locales = ["Ver Local",
+                                        "Agregar Local",
+                                        "Eliminar Local",
+                                        "Volver Atras"]
+                    DisplayMenu(opciones_locales)
+                    opcion = InputOpciones(opciones_locales)
+                    if opcion == 1:
+                        pass
+                    if opcion == 2:
+                        pass
+                    if opcion == 3:
+                        pass
+                    if opcion == 4:
+                        break
+
+            elif opcion == 2:
                 pass
 
-            if opcion == 2:
-                pass
-
-            if opcion == 3:
+            elif opcion == 3:
                 pass
 
             if opcion == 4:
