@@ -34,7 +34,10 @@ def PrintQuerry(text):
     try:
         cur.execute(text)
         request = cur.fetchall()
-        print(tabulate(request, tablefmt="psql"))
+        description = []
+        for desc in cur.description:
+            description.append(desc[0])
+        print(tabulate(request, headers = description, tablefmt="psql"))
     except:
         print("Querry ingresado no valido")
 
@@ -68,6 +71,16 @@ def InsertQuerry(table, lista_columnas, lista_datos):
     else:
         print("Insert no tiene valores")
         return False
+
+#Elimina una linea
+def DeleteQuerry(table, text):
+    cur = con.cursor()
+    try:
+        querry_text = "DELETE FROM " + table + " WHERE " + text
+        cur.execute(querry_text)
+        con.commit()
+    except:
+        print("Error al intentar eliminar la linea")
 
 #Muestra en la consola el listado de opciones
 def DisplayMenu(lista_menu):
@@ -113,7 +126,7 @@ while main:
         querry = input("Ingresar querry: ")
         PrintQuerry(querry)
 
-    if opcion == 2:
+    elif opcion == 2:
         #Validacion login
         print("Iniciar Sesion\n")
         login_nombre_usuario = input("Ingresar nombre de usuario: ")
@@ -137,21 +150,18 @@ while main:
             opcion = InputOpciones(menu_entrada_usuario)
 
             if opcion == 1:
-                PrintQuerry("SELECT * FROM locales")
+                PrintQuerry("SELECT * FROM locales OREDER BY id_local DES")
                 while True:
                     opciones_locales = ["Ver Local",
                                         "Agregar Local",
-                                        "Eliminar Local",
                                         "Volver Atras"]
                     DisplayMenu(opciones_locales)
                     opcion = InputOpciones(opciones_locales)
                     if opcion == 1:
-                        pass
-                    if opcion == 2:
-                        pass
-                    if opcion == 3:
-                        pass
-                    if opcion == 4:
+                        id_local = input("Ingresar numero de local para ver opciones")
+                    elif opcion == 2:
+                        print("Agregar local")
+                    elif opcion == 3:
                         break
 
             elif opcion == 2:
@@ -160,26 +170,26 @@ while main:
             elif opcion == 3:
                 pass
 
-            if opcion == 4:
+            elif opcion == 4:
                 pass
 
-            if opcion == 5:
+            elif opcion == 5:
                 pass
 
-            if opcion == 6:
+            elif opcion == 6:
                 pass
 
-            if opcion == 7:
+            elif opcion == 7:
                 pass
 
-            if opcion == 8:
+            elif opcion == 8:
                 break
 
-            if opcion == 9:
+            elif opcion == 9:
                 main = False
                 break
 
-    if opcion == 3:
+    elif opcion == 3:
         while True:
             print("Bienvenido a Hubber Eats\nRegistrarse:\n")
             nombre_apellido = "'" + input("Ingresar nombre y apellido: ") + "'"
@@ -212,13 +222,11 @@ while main:
             else:
                 print("Usuario no valido")
 
-    if opcion == 4:
+    elif opcion == 4:
         main = False
     
-    if opcion == 5:
+    elif opcion == 5:
         PrintQuerry("SELECT * FROM usuarios")
-        nuevo_id_usuario = SelectQuerry("SELECT id_usuario FROM usuarios")
-        print(len(nuevo_id_usuario) + 1)
 
 con.close()
 
