@@ -12,7 +12,7 @@ con = svpg.connect(database="grupo6",
                  port="54321")
 
 print("Conexion exitosa")
-
+#######PROBANDO
 #querry de ejemplo (locales, productos, pedidos, usuarios, menues, etc)
 #SELECT * FROM categorias 
 #con.commit()  // Actualiza los cambios en la base de datos, 
