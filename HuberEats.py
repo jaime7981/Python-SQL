@@ -173,24 +173,26 @@ while main:
                     opcion = InputOpciones(opciones_locales)
                     if opcion == 1:
                         id_local_seleccionado = QuerryOptionIdCheck("SELECT id_local FROM locales", 
-                                                     "Ingresar id local: ")
+                                                                    "Ingresar id local: ")
                         if id_local_seleccionado != 0:
                             print("id_local ", id_local_seleccionado)
+                            #DeleteQuerry("locales", "id_local = " + str(id_local_seleccionado))
 
                     elif opcion == 2:
                         print("Agregar local")
-                        nombre_local = input("Nombre local: ")
-                        calle_local = input("Direccion local: ")
-                        numero_local = print("Numero local: ")
-                        comuna_local = print("Comuna local: ")
-                        region_local = print("Region local: ")
-                        aceptar_opcion = input("Esta seguro de esta informacion? (S/N)")
+                        nombre_local = "'" + input("Nombre local: ") + "'"
+                        calle_local = "'" + input("Direccion local: ") + "'"
+                        numero_local = input("Numero local: ")
+                        comuna_local = "'" + input("Comuna local: ") + "'"
+                        region_local = "'" + input("Region local: ") + "'"
+                        aceptar_opcion = input("Esta seguro de esta informacion? (S/N) ")
                         if aceptar_opcion == "S":
-                            InsertQuerry("locales", (), (nombre_local,
-                                                         calle_local,
-                                                         numero_local,
-                                                         comuna_local,
-                                                         region_local))
+                            InsertQuerry("locales", ("nombre", "calle", "numero", "comuna", "region"),
+                                                    (nombre_local,
+                                                     calle_local,
+                                                     str(numero_local),
+                                                     comuna_local,
+                                                     region_local))
 
                     elif opcion == 3:
                         break
