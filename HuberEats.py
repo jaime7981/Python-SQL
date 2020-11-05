@@ -89,15 +89,6 @@ def DisplayMenu(lista_menu):
         print(str(counter) + ") " + str(titulo_opcion))
         counter += 1
 
-#Valida que el usuario y clave ingresada esten en la bbdd 
-def ValidacionUsuario(usuario, clave):
-    usuarios_and_clave = SelectQuerry("SELECT email, contrasena FROM usuarios")
-    for usuarios in usuarios_and_clave:
-        if usuario == usuarios[0]:
-            if clave == usuarios[1]:
-                return True
-    return False
-
 #Funcion que valida que la opcion ingresada sea un numero
 def InputOpciones(menu):
     try:
@@ -108,6 +99,29 @@ def InputOpciones(menu):
             print("No existe la opcion ingresada")
     except:
         print("Opcion no valida")
+
+#Valida que el usuario y clave ingresada esten en la bbdd 
+def ValidacionUsuario(usuario, clave):
+    usuarios_and_clave = SelectQuerry("SELECT email, contrasena FROM usuarios")
+    for usuarios in usuarios_and_clave:
+        if usuario == usuarios[0]:
+            if clave == usuarios[1]:
+                return True
+    return False
+
+#Sirve para verificar que el usuario metio un id que existe en la tabla
+def QuerryOptionIdCheck(querry, text):
+    try:
+        option = int(input(text))
+        querry_check = SelectQuerry(querry)
+        for check in querry_check:
+            if check[0] == option:
+                return option
+        print("Opcion no valida")
+        return 0
+    except:
+        print("Error de querry")
+        return 0
 
 #Programa principal
 main = True
@@ -150,7 +164,7 @@ while main:
             opcion = InputOpciones(menu_entrada_usuario)
 
             if opcion == 1:
-                PrintQuerry("SELECT * FROM locales OREDER BY id_local DES")
+                PrintQuerry("SELECT * FROM locales")
                 while True:
                     opciones_locales = ["Ver Local",
                                         "Agregar Local",
@@ -158,9 +172,26 @@ while main:
                     DisplayMenu(opciones_locales)
                     opcion = InputOpciones(opciones_locales)
                     if opcion == 1:
-                        id_local = input("Ingresar numero de local para ver opciones")
+                        id_local_seleccionado = QuerryOptionIdCheck("SELECT id_local FROM locales", 
+                                                     "Ingresar id local: ")
+                        if id_local_seleccionado != 0:
+                            print("id_local ", id_local_seleccionado)
+
                     elif opcion == 2:
                         print("Agregar local")
+                        nombre_local = input("Nombre local: ")
+                        calle_local = input("Direccion local: ")
+                        numero_local = print("Numero local: ")
+                        comuna_local = print("Comuna local: ")
+                        region_local = print("Region local: ")
+                        aceptar_opcion = input("Esta seguro de esta informacion? (S/N)")
+                        if aceptar_opcion == "S":
+                            InsertQuerry("locales", (), (nombre_local,
+                                                         calle_local,
+                                                         numero_local,
+                                                         comuna_local,
+                                                         region_local))
+
                     elif opcion == 3:
                         break
 
