@@ -12,10 +12,10 @@ con = svpg.connect(database="grupo6",
                  port="54321")
 
 print("Conexion exitosa")
+print("Bienveido")
 #querry de ejemplo (locales, productos, pedidos, usuarios, menues, etc)
 #SELECT * FROM categorias 
-#con.commit()  // Actualiza los cambios en la base de datos, 
-#                   asi como los CREATE TABLE, UPDATES, INSERT, etc
+#con.commit()  // Actualiza los cambios en la base de datos, asi como los CREATE TABLE, UPDATES, INSERT, etc
 
 #Devuelve un querry
 def SelectQuerry(text):
