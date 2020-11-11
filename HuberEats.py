@@ -11,6 +11,9 @@ con = svpg.connect(database="grupo6",
                  host="201.238.213.114", 
                  port="54321")
 
+menu_shoping_cart = []
+product_shoping_cart = []
+
 print("Conexion exitosa")
 print("Bienveido")
 #querry de ejemplo (locales, productos, pedidos, usuarios, menues, etc)
@@ -33,12 +36,18 @@ def PrintQuerry(text):
     try:
         cur.execute(text)
         request = cur.fetchall()
+        print(len(request))
+        if len(request) == 0:
+            print("No hay datos")
+            return False
         description = []
         for desc in cur.description:
             description.append(desc[0])
         print(tabulate(request, headers = description, tablefmt="psql"))
+        return True
     except:
         print("Querry ingresado no valido")
+        return False
 
 #InsertTest("nombre tabla", ("col1", "col2", "col3"), ("dato1", "dato2", "dato3"))
 #
@@ -78,6 +87,7 @@ def DeleteQuerry(table, text):
         querry_text = "DELETE FROM " + table + " WHERE " + text
         cur.execute(querry_text)
         con.commit()
+        print("Exito al ejecutar DELETE querry")
     except:
         print("Error al intentar eliminar la linea")
 
@@ -122,6 +132,20 @@ def QuerryOptionIdCheck(querry, text):
         print("Error de querry")
         return 0
 
+def ClearShopingCart():
+    menu_shoping_cart.clear()
+    product_shoping_cart.clear()
+
+def AddToCart(product_menu_id, product_menu_flag):
+    #True para producto False para menu
+    try:
+        if product_menu_flag == True:
+            product_shoping_cart.append(product_menu_id)
+        if product_menu_flag == False:
+            menu_shoping_cart.append(product_menu_id)
+    except:
+        print("Parametros ingresados a AddToCart debe ser (int, bool)")
+
 #Programa principal
 main = True
 
@@ -163,9 +187,9 @@ while main:
             opcion = InputOpciones(menu_entrada_usuario)
 
             if opcion == 1:
-                PrintQuerry("SELECT * FROM locales")
                 while True:
-                    opciones_locales = ["Ver Local",
+                    PrintQuerry("SELECT * FROM locales")
+                    opciones_locales = ["Seleccionar Local",
                                         "Agregar Local",
                                         "Volver Atras"]
                     DisplayMenu(opciones_locales)
@@ -174,8 +198,83 @@ while main:
                         id_local_seleccionado = QuerryOptionIdCheck("SELECT id_local FROM locales", 
                                                                     "Ingresar id local: ")
                         if id_local_seleccionado != 0:
-                            print("id_local ", id_local_seleccionado)
-                            #DeleteQuerry("locales", "id_local = " + str(id_local_seleccionado))
+                            while True:
+                                PrintQuerry("SELECT * FROM locales WHERE id_local = " + str(id_local_seleccionado))
+                                opcion_local_id = ["Editar Local",
+                                                   "Eliminar Local",
+                                                   "Ver Menus",
+                                                   "Volver Atras"]
+                                DisplayMenu(opcion_local_id)
+                                opcion = InputOpciones(opcion_local_id)
+                                if opcion == 1:
+                                    print("Implementar editar local")
+
+                                elif opcion == 2:
+                                    delete_check = input("Seguro que desea eliminar este local (S/N) ")
+                                    if delete_check == "S":
+                                        DeleteQuerry("locales", "id_local = " + str(id_local_seleccionado))
+
+                                elif opcion == 3:
+                                    while True:
+                                        PrintQuerry("SELECT * FROM menues WHERE id_local = " + str(id_local_seleccionado))
+                                        opcion_menues = ["Seleccionar Menu",
+                                                        "Agregar Menu",
+                                                        "Volver Atras"]
+                                        DisplayMenu(opcion_menues)
+                                        opcion = InputOpciones(opcion_menues)
+                                        if opcion == 1:
+                                            id_menu_seleccionado = QuerryOptionIdCheck("SELECT id_menu FROM menues",
+                                                                                        "Ingresar id menu: ")
+                                            if id_menu_seleccionado != 0:
+                                                while True:
+                                                    large_querry = "SELECT pr.id_local, pr.id_producto, pr.nombre, pr.precio, pr.id_descuento \
+                                                                FROM productos pr INNER JOIN \
+                                                                (SELECT mp.id_producto FROM menu_producto mp INNER JOIN \
+                                                                (SELECT men.id_menu FROM menues men WHERE id_menu = " + str(id_menu_seleccionado) + \
+                                                                ") AS t1 ON mp.id_menu = t1.id_menu) AS t2 ON pr.id_producto = t2.id_producto"
+                                                    PrintQuerry(large_querry)
+                                                    opcion_menues = ["Agregar Menu Al Carrito",
+                                                                        "Eliminar Producto Del Menu",
+                                                                        "Editar Menu",
+                                                                        "Eliminar Menu",
+                                                                        "Descuento",
+                                                                        "Volver Atras"]
+                                                    DisplayMenu(opcion_menues)
+                                                    opcion = InputOpciones(opcion_menues)
+    
+                                                    if opcion == 1:
+                                                        AddToCart(id_menu_seleccionado, False)
+
+                                                    elif opcion == 2:
+                                                        id_producto_seleccionado = QuerryOptionIdCheck("SELECT mp.id_producto FROM menu_producto mp INNER JOIN \
+                                                                            (SELECT men.id_menu FROM menues men WHERE id_menu = 20) AS t1 ON mp.id_menu = t1.id_menu",
+                                                                            "Ingresar ID producto: ")
+                                                        if id_producto_seleccionado != 0:
+                                                            delete_product_from_menu = input("Eliminar el producto del menu? (S/N) ")
+                                                            if delete_product_from_menu == "S":
+                                                                DeleteQuerry("menu_producto", "id_menu = " + str(id_menu_seleccionado) + \
+                                                                                                " AND id_producto = " + str(id_producto_seleccionado))
+                                                        
+                                                    elif opcion == 3:
+                                                        print("Implementar editar menu")
+
+                                                    elif opcion == 4:
+                                                        print("Implementar eliminar menu")
+
+                                                    elif opcion == 5:
+                                                        print("Implementar opcion descuento")
+
+                                                    elif opcion == 6:
+                                                        break
+
+                                        elif opcion == 2:
+                                            print("implementar agregar menu")
+
+                                        elif opcion == 3:
+                                            break
+
+                                elif opcion == 4:
+                                    break
 
                     elif opcion == 2:
                         print("Agregar local")
