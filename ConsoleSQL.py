@@ -2,24 +2,10 @@ import psycopg2 as svpg
 from tabulate import tabulate
 import PythonSQL as sql
 
-class ColsoleSLQ:
-
-    def __init__(self, database, user, password, host, port, con):
-        self.database = database
-        self.user = user
-        self.password = password
-        self.host = host
-        self.port = port
-
-        try:
-            self.con = svpg.connect(database=database,
-                                    user=user,
-                                    password=password,
-                                    host=host,
-                                    port=port)
-            print("Conexion exitosa")
-        except:
-            print("No se pudo conectar a la bbdd")
+class ColsoleSLQ(sql.SQLDatabase):
+    def __init__(self, database, user, password, host, port):
+        #sql.SQLDatabase.__init__(self, database, user, password, host, port)
+        super().__init__(database, user, password, host, port)
 
     ### Funciones Aplicacion en Consola
 
@@ -89,26 +75,26 @@ class ColsoleSLQ:
         except:
             print("Opcion no valida")
 
-    # #Valida que el usuario y clave ingresada esten en la bbdd (Funciona para mi proyecto para la universidad pero es modificable para cualquier validacion)
-    # def ValidacionUsuario(self, usuario, clave):
+    #Valida que el usuario y clave ingresada esten en la bbdd (Funciona para mi proyecto para la universidad pero es modificable para cualquier validacion)
+    def ValidacionUsuario(self, usuario, clave):
 
-    #     usuarios_and_clave = sql.SelectQuerry("SELECT email, contrasena FROM usuarios")
-    #     for usuarios in usuarios_and_clave:
-    #         if usuario == usuarios[0]:
-    #             if clave == usuarios[1]:
-    #                 return True
-    #     return False
+        usuarios_and_clave = self.SelectQuerry("SELECT email, contrasena FROM usuarios")
+        for usuarios in usuarios_and_clave:
+            if usuario == usuarios[0]:
+                if clave == usuarios[1]:
+                    return True
+        return False
 
-    # #Sirve para verificar que el usuario metio un id que existe en la tabla (Para proyecto en consola)
-    # def QuerryOptionIdCheck(self, querry, text):
-    #     try:
-    #         option = int(input(text))
-    #         querry_check = sql.SelectQuerry(querry)
-    #         for check in querry_check:
-    #             if check[0] == option:
-    #                 return option
-    #         print("Opcion no valida")
-    #         return 0
-    #     except:
-    #         print("Error de querry")
-    #         return 0
+    #Sirve para verificar que el usuario metio un id que existe en la tabla (Para proyecto en consola)
+    def QuerryOptionIdCheck(self, querry, text):
+        try:
+            option = int(input(text))
+            querry_check = self.SelectQuerry(querry)
+            for check in querry_check:
+                if check[0] == option:
+                    return option
+            print("Opcion no valida")
+            return 0
+        except:
+            print("Error de querry")
+            return 0

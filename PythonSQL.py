@@ -3,7 +3,9 @@ from tabulate import tabulate
 
 class SQLDatabase:
 
-    def __init__(self, database, user, password, host, port, con):
+    def __init__(self, database, user, password, host, port):
+        self.validation = False
+
         self.database = database
         self.user = user
         self.password = password
@@ -17,8 +19,10 @@ class SQLDatabase:
                                     host=host,
                                     port=port)
             print("Conexion exitosa")
+            self.validation = True
         except:
             print("No se pudo conectar a la bbdd")
+            self.validation = False
 
     ## Funciones PostgreSQL
 
@@ -115,3 +119,6 @@ class SQLDatabase:
     #Cierra la conexion a la bbdd
     def CloseSV(self):
         self.con.close()
+
+    def GetConectionValidation(self):
+        return self.validation
