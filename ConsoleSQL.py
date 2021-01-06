@@ -1,6 +1,7 @@
 import psycopg2 as svpg
 from tabulate import tabulate
 import PythonSQL as sql
+import mysql.connector
 
 class ColsoleSLQ(sql.SQLDatabase):
     def __init__(self, database, user, password, host, port):

@@ -1,9 +1,9 @@
 import psycopg2 as svpg
 from tabulate import tabulate
-
+import mysql.connector
 class SQLDatabase:
 
-    def __init__(self, database, user, password, host, port):
+    def __init__(self, database, user, password, host, port, type):
         self.validation = False
 
         self.database = database
@@ -13,13 +13,20 @@ class SQLDatabase:
         self.port = port
 
         try:
-            self.con = svpg.connect(database=database,
-                                    user=user,
-                                    password=password,
-                                    host=host,
-                                    port=port)
-            print("Conexion exitosa")
-            self.validation = True
+            if type == "PostgreSQL":
+                self.con = svpg.connect(database=database,
+                                        user=user,
+                                        password=password,
+                                        host=host,
+                                        port=port)
+                print("Conexion exitosa")
+                self.validation = True
+            if type == "MySQL":
+                self.con = mysql.connector.connect(host=host,
+                                                   user=user,
+                                                   password=password,
+                                                   database=database)
+                self.validation = True
         except:
             print("No se pudo conectar a la bbdd")
             self.validation = False
